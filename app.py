@@ -319,6 +319,8 @@ def use_coupon(container, container_name, klant_naam, postcode, huisnummer, coup
 
     items = container.query_items(query, enable_cross_partition_query = True)
 
+    return 'Coupon succesvol gebruikt.'
+
     # Vervangen van nieuwe json
     for item in items:
         container.replace_item(item=item, body=klant_json)
@@ -342,6 +344,7 @@ parser.add_argument('naam')
 parser.add_argument('postcode')
 parser.add_argument('huisnummer')
 parser.add_argument('winkelnaam')
+parser.add_argument('coupon')
 
 class status(Resource):
     def get(self):
@@ -392,11 +395,24 @@ class NieuwBezoek(Resource):
 
         return visit
 
+class GebruikCoupon(Resource):
+    def post(self):
+        args = parser.parse_args()
+        naam = args['naam']
+        postcode = args['postcode']
+        huisnummer = args['huisnummer']
+        coupon = args['coupon']
+
+        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
+        couponresult = use_coupon(container, CONTAINER_NAAM, naam, postcode, huisnummer, coupon)
+
+        return couponresult
 
 api.add_resource(status, '/api/status')
 api.add_resource(NieuweKlant, '/api/nieuweklant')
 api.add_resource(KlantInfo, '/api/klantinfo/<userinfo>')
 api.add_resource(NieuwBezoek, '/api/nieuwbezoek')
+api.add_resource(GebruikCoupon, '/api/gebruikcoupon')
 
 # Start App
 if __name__ == '__main__':
