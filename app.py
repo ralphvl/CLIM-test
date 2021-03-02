@@ -357,6 +357,19 @@ class klant(Resource):
         new_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer)
         return {'status': 'ok'}
 
+    def get(self):
+        args = parser.parse_args()
+        naam = args['naam']
+        postcode = args['postcode']
+        huisnummer = args['huisnummer']
+
+        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
+        klant = get_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer)
+
+        return klant
+
+
+
 api.add_resource(status, '/api/status')
 api.add_resource(klant, '/api/klant')
 
