@@ -349,4 +349,4 @@ class status(Resource):
 
 api.add_resource(status, '/')
 
-app.run(debug=True)
+app.run()
