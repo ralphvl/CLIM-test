@@ -379,7 +379,7 @@ class KlantInfo(Resource):
 
         return klant
 
-class NieuwBezoek():
+class NieuwBezoek(Resource):
     def post(self):
         args = parser.parse_args()
         naam = args['naam']
