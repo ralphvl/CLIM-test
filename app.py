@@ -10,10 +10,10 @@ from flask import Flask
 from flask_restful import reqparse, Api, Resource
 
 # Variables van verbinding
-HOST = 'https://ralphschoolnosql.documents.azure.com:443/'
-KEY = 'moLQAem7L2MOupK3iQvDJSTCswoTxQex1yd4jZI1jzdYiNnUwb5i8nYyLxlMar6balvAsUuPWOa6kp6IwztT7A=='
-DATABASE_NAME = 'ralphtest'
-CONTAINER_NAAM = 'klantgegevens3'
+global HOST = 'https://ralphschoolnosql.documents.azure.com:443/'
+global KEY = 'moLQAem7L2MOupK3iQvDJSTCswoTxQex1yd4jZI1jzdYiNnUwb5i8nYyLxlMar6balvAsUuPWOa6kp6IwztT7A=='
+global DATABASE_NAME = 'ralphtest'
+global CONTAINER_NAAM = 'klantgegevens3'
 
 def default_actions(host, key, database_name, container_name, partition_name):
     '''Connect naar Azure, maakt database aan en maakt container aan
@@ -331,23 +331,36 @@ def use_coupon(container, container_name, klant_naam, postcode, huisnummer, coup
 
 # Het vullen van de database met algemene informatie (runnen na legen van database)
 container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
-new_customer(container, CONTAINER_NAAM, 'Ralph van Leeuwen', '3437JN', '40')
-new_customer(container, CONTAINER_NAAM, 'Cornelis Stuurman', '3333WR', '396')
-add_visit(container, CONTAINER_NAAM, 'Ralph van Leeuwen', '3437JN', '40', 'Nieuwegein', '1')
-use_coupon(container, CONTAINER_NAAM, 'Ralph van Leeuwen', '3437JN', '40', "6647882" , '1')
 
 app = Flask(__name__)
 api = Api(app)
 
 parser = reqparse.RequestParser()
-#parser.add_argument('name')
-#parser.add_argument('street')
+parser.add_argument('naam')
+parser.add_argument('adres')
+parser.add_argument('postcode')
+parser.add_argument('huisnummer')
 
 class status(Resource):
     def get(self):
         return {'status': 'ok'}
 
+
+
+class klant(Resource):
+    def post(self):
+        args = parser.parse_args()
+        naam = args['naam']
+        adres = args['adres']
+        postcode = args['postcode']
+        huisnummer = args['huisnummer']
+
+        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
+        new_customer(container, CONTAINER_NAAM, naam, adres, postcode, huisnummer)
+        return {'status': 'ok'}
+
 api.add_resource(status, '/api/status')
+api.add_resource(klant, '/api/klant')
 
 # Start App
 if __name__ == '__main__':
