@@ -7,7 +7,7 @@ import datetime
 from random import randint
 import base64
 from flask import Flask
-from flask_restful import reqparse, abort, Api, Resource
+from flask_restful import reqparse, Api, Resource
 
 # Variables van verbinding
 HOST = 'https://ralphschoolnosql.documents.azure.com:443/'
@@ -347,6 +347,8 @@ class status(Resource):
     def get(self):
         return {'status': 'ok'}
 
-api.add_resource(status, '/')
+api.add_resource(status, '/api/status')
 
-app.run()
+# Start App
+if __name__ == '__main__':
+    app.run()
