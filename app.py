@@ -345,6 +345,7 @@ parser.add_argument('postcode')
 parser.add_argument('huisnummer')
 parser.add_argument('winkelnaam')
 parser.add_argument('coupon')
+parser.add_argument('klantid')
 
 class status(Resource):
     def get(self):
@@ -408,11 +409,65 @@ class GebruikCoupon(Resource):
 
         return couponresult
 
+class DubbelKlantInfo(Resource):
+    def get(self, userinfo):
+        naam = (userinfo.split('-')[0]).replace('_', ' ')
+        postcode = userinfo.split('-')[1]
+        huisnummer = userinfo.split('-')[2]
+        klant_id = userinfo.split('-')[3]
+
+        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
+        klant = get_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer, klant_id)
+
+        return klant
+
+    def delete(self, userinfo):
+        naam = (userinfo.split('-')[0]).replace('_', ' ')
+        postcode = userinfo.split('-')[1]
+        huisnummer = userinfo.split('-')[2].
+        klant_id = userinfo.split('-')[3]
+
+        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
+        klant = delete_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer, klant_id)
+
+        return klant
+
+class DubbelNieuwBezoek(Resource):
+    def post(self):
+        args = parser.parse_args()
+        naam = args['naam']
+        postcode = args['postcode']
+        huisnummer = args['huisnummer']
+        winkelnaam = args['winkelnaam']
+        klant_id = args['klantid']
+
+        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
+        visit = add_visit(container, CONTAINER_NAAM, naam, postcode, huisnummer, winkelnaam, klant_id)
+
+        return visit
+
+class DubbelGebruikCoupon(Resource):
+    def post(self):
+        args = parser.parse_args()
+        naam = args['naam']
+        postcode = args['postcode']
+        huisnummer = args['huisnummer']
+        coupon = args['coupon']
+        klant_id = args['klantid']
+
+        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
+        couponresult = use_coupon(container, CONTAINER_NAAM, naam, postcode, huisnummer, coupon, klant_id)
+
+        return couponresult
+
 api.add_resource(status, '/api/status')
 api.add_resource(NieuweKlant, '/api/nieuweklant')
 api.add_resource(KlantInfo, '/api/klantinfo/<userinfo>')
 api.add_resource(NieuwBezoek, '/api/nieuwbezoek')
 api.add_resource(GebruikCoupon, '/api/gebruikcoupon')
+api.add_resource(DubbelKlantInfo, '/api/dubbel/klantinfo/<userinfo>')
+api.add_resource(DubbelNieuwBezoek, '/api/dubbel/nieuwbezoek')
+api.add_resource(DubbelGebruikCoupon, '/api/dubbel/gebruikcoupon')
 
 # Start App
 if __name__ == '__main__':
