@@ -7,13 +7,8 @@ import datetime
 from random import randint
 import base64
 from flask import Flask
-app = Flask(__name__)
+from flask_restful import reqparse, abort, Api, Resource
 
-@app.route("/")
-def hello():
-    return "Hello, World!"
-
-    
 # Variables van verbinding
 HOST = 'https://ralphschoolnosql.documents.azure.com:443/'
 KEY = 'moLQAem7L2MOupK3iQvDJSTCswoTxQex1yd4jZI1jzdYiNnUwb5i8nYyLxlMar6balvAsUuPWOa6kp6IwztT7A=='
@@ -340,4 +335,13 @@ new_customer(container, CONTAINER_NAAM, 'Ralph van Leeuwen', '3437JN', '40')
 new_customer(container, CONTAINER_NAAM, 'Cornelis Stuurman', '3333WR', '396')
 add_visit(container, CONTAINER_NAAM, 'Ralph van Leeuwen', '3437JN', '40', 'Nieuwegein', '1')
 use_coupon(container, CONTAINER_NAAM, 'Ralph van Leeuwen', '3437JN', '40', "6647882" , '1')
+
+app = Flask(__name__)
+api = Api(app)
+
+class Status(Resource):
+    def status(self):
+        return {'status': 'ok'}
+
+api.add_resource(Status, '/api/status')
 
