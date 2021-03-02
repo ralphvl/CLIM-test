@@ -223,6 +223,8 @@ def add_visit(container, container_name, klant_naam, postcode, huisnummer, winke
     for item in items:
         container.replace_item(item=item, body=klant_json)
 
+    return tag_id
+
 def get_customer(container, container_name, klant_naam, postcode, huisnummer, klant_id = 0):
     '''Haalt klant op uit winkel op basis van NAW gegevens.
 
@@ -339,12 +341,11 @@ parser = reqparse.RequestParser()
 parser.add_argument('naam')
 parser.add_argument('postcode')
 parser.add_argument('huisnummer')
+parser.add_argument('winkelnaam')
 
 class status(Resource):
     def get(self):
         return {'status': 'ok'}
-
-
 
 class NieuweKlant(Resource):
     def post(self):
@@ -378,10 +379,24 @@ class KlantInfo(Resource):
 
         return klant
 
+class NieuwBezoek():
+    def post(self):
+        args = parser.parse_args()
+        naam = args['naam']
+        postcode = args['postcode']
+        huisnummer = args['huisnummer']
+        winkelnaam = args['winkelnaam']
+
+        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
+        visit = add_visit(container, CONTAINER_NAAM, naam, postcode, huisnummer, winkelnaam)
+
+        return visit
+
 
 api.add_resource(status, '/api/status')
 api.add_resource(NieuweKlant, '/api/nieuweklant')
 api.add_resource(KlantInfo, '/api/klantinfo/<userinfo>')
+api.add_resource(NieuwBezoek, '/api/nieuwbezoek')
 
 # Start App
 if __name__ == '__main__':
