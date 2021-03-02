@@ -424,7 +424,7 @@ class DubbelKlantInfo(Resource):
     def delete(self, userinfo):
         naam = (userinfo.split('-')[0]).replace('_', ' ')
         postcode = userinfo.split('-')[1]
-        huisnummer = userinfo.split('-')[2].
+        huisnummer = userinfo.split('-')[2]
         klant_id = userinfo.split('-')[3]
 
         container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
