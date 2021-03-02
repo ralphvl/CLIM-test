@@ -346,7 +346,7 @@ class status(Resource):
 
 
 
-class klant(Resource):
+class NieuweKlant(Resource):
     def post(self):
         args = parser.parse_args()
         naam = args['naam']
@@ -357,11 +357,11 @@ class klant(Resource):
         new_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer)
         return {'status': 'ok'}
 
-    def get(self):
-        args = parser.parse_args()
-        naam = args['naam']
-        postcode = args['postcode']
-        huisnummer = args['huisnummer']
+class KlantInfo(Resource):
+    def get(self, user_info):
+        naam = user_info.split('-')[0]
+        postcode = user_info.split('-')[1]
+        huisnummer = user_info.split('-')[2]
 
         container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
         klant = get_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer)
@@ -369,9 +369,9 @@ class klant(Resource):
         return klant
 
 
-
 api.add_resource(status, '/api/status')
-api.add_resource(klant, '/api/klant')
+api.add_resource(NieuweKlant, '/api/nieuweklant')
+api.add_resource(NieuweKlant, '/api/KlantInfo/<user-info>')
 
 # Start App
 if __name__ == '__main__':
