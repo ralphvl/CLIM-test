@@ -358,10 +358,10 @@ class NieuweKlant(Resource):
         return {'status': 'ok'}
 
 class KlantInfo(Resource):
-    def get(self, user_info):
-        naam = user_info.split('-')[0]
-        postcode = user_info.split('-')[1]
-        huisnummer = user_info.split('-')[2]
+    def get(self, userinfo):
+        naam = userinfo.split('-')[0]
+        postcode = userinfo.split('-')[1]
+        huisnummer = userinfo.split('-')[2]
 
         container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
         klant = get_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer)
@@ -371,7 +371,7 @@ class KlantInfo(Resource):
 
 api.add_resource(status, '/api/status')
 api.add_resource(NieuweKlant, '/api/nieuweklant')
-api.add_resource(NieuweKlant, '/api/KlantInfo/<user-info>')
+api.add_resource(KlantInfo, '/api/klantinfo/<userinfo>')
 
 # Start App
 if __name__ == '__main__':
