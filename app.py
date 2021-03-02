@@ -347,6 +347,6 @@ class status(Resource):
     def get(self):
         return {'status': 'ok'}
 
-api.add_resource(status, '/api/status')
+api.add_resource(status, '/')
 
 app.run(debug=True)
