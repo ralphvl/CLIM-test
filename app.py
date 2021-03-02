@@ -10,10 +10,10 @@ from flask import Flask
 from flask_restful import reqparse, Api, Resource
 
 # Variables van verbinding
-global HOST = 'https://ralphschoolnosql.documents.azure.com:443/'
-global KEY = 'moLQAem7L2MOupK3iQvDJSTCswoTxQex1yd4jZI1jzdYiNnUwb5i8nYyLxlMar6balvAsUuPWOa6kp6IwztT7A=='
-global DATABASE_NAME = 'ralphtest'
-global CONTAINER_NAAM = 'klantgegevens3'
+HOST = 'https://ralphschoolnosql.documents.azure.com:443/'
+KEY = 'moLQAem7L2MOupK3iQvDJSTCswoTxQex1yd4jZI1jzdYiNnUwb5i8nYyLxlMar6balvAsUuPWOa6kp6IwztT7A=='
+DATABASE_NAME = 'ralphtest'
+CONTAINER_NAAM = 'klantgegevens3'
 
 def default_actions(host, key, database_name, container_name, partition_name):
     '''Connect naar Azure, maakt database aan en maakt container aan
