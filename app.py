@@ -368,6 +368,16 @@ class KlantInfo(Resource):
 
         return klant
 
+    def delete(self, userinfo):
+        naam = (userinfo.split('-')[0]).replace('_', ' ')
+        postcode = userinfo.split('-')[1]
+        huisnummer = userinfo.split('-')[2]
+
+        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
+        klant = delete_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer)
+
+        return klant
+
 
 api.add_resource(status, '/api/status')
 api.add_resource(NieuweKlant, '/api/nieuweklant')
