@@ -337,7 +337,6 @@ api = Api(app)
 
 parser = reqparse.RequestParser()
 parser.add_argument('naam')
-parser.add_argument('adres')
 parser.add_argument('postcode')
 parser.add_argument('huisnummer')
 
@@ -351,12 +350,11 @@ class klant(Resource):
     def post(self):
         args = parser.parse_args()
         naam = args['naam']
-        adres = args['adres']
         postcode = args['postcode']
         huisnummer = args['huisnummer']
 
         container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
-        new_customer(container, CONTAINER_NAAM, naam, adres, postcode, huisnummer)
+        new_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer)
         return {'status': 'ok'}
 
 api.add_resource(status, '/api/status')
