@@ -4,13 +4,14 @@ import azure.cosmos.exceptions as exceptions
 from azure.cosmos import PartitionKey
 import json
 import datetime
+import os
 from random import randint
 import base64
 from flask import Flask
 from flask_restful import reqparse, Api, Resource
 
 # Variables van verbinding
-HOST = 'https://ralphschoolnosql.documents.azure.com:443/'
+HOST = os.environ['DB_HOST']
 KEY = 'moLQAem7L2MOupK3iQvDJSTCswoTxQex1yd4jZI1jzdYiNnUwb5i8nYyLxlMar6balvAsUuPWOa6kp6IwztT7A=='
 DATABASE_NAME = 'ralphtest'
 CONTAINER_NAAM = 'klantgegevens3'
