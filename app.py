@@ -339,9 +339,14 @@ use_coupon(container, CONTAINER_NAAM, 'Ralph van Leeuwen', '3437JN', '40', "6647
 app = Flask(__name__)
 api = Api(app)
 
+parser = reqparse.RequestParser()
+#parser.add_argument('name')
+#parser.add_argument('street')
+
 class status(Resource):
     def get(self):
         return {'status': 'ok'}
 
 api.add_resource(status, '/api/status')
 
+app.run()
