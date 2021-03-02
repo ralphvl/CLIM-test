@@ -359,7 +359,7 @@ class NieuweKlant(Resource):
 
 class KlantInfo(Resource):
     def get(self, userinfo):
-        naam = userinfo.split('-')[0]
+        naam = (userinfo.split('-')[0]).replace('_', ' ')
         postcode = userinfo.split('-')[1]
         huisnummer = userinfo.split('-')[2]
 
