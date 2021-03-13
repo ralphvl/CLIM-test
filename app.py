@@ -327,7 +327,68 @@ def use_coupon(container, container_name, klant_naam, postcode, huisnummer, coup
         container.replace_item(item=item, body=klant_json)
 
     return message
-    
+
+def update(container, container_name, klant_naam, postcode, huisnummer, coupon, nieuwelocatie, klant_id = 0):
+    '''Update een bestaande coupon
+
+    Keyword Arguments:
+    container(class) -- Output van vorige functie
+    container_name(string) -- Naam van functie. Hoort bij container.
+    klant_naam(sting) -- Volledige naam van de klant, voorbeeld van formaat: Ralph van Leeuwen
+    postcode(string) -- Postcode van klant, voorbeeld van formaat: 3437JN
+    huisnummer(string) -- Huisnummer van klant, voorbeeld van formaat: 40
+    coupon(string) -- Coupon nummer
+    nieuwelocatie(string) -- Coupon nummer
+    klant_id(string) -- Optioneel voor als er 2 klanten zijn met de zelfde NAW gegevens.
+
+    Returns:
+    None
+    '''
+
+    # Aanspreken van functie die controleert of er dubbele klanten zijn of geen klanten zijn.
+    klant_count = check_doublecustomer(container, container_name, klant_naam, postcode, huisnummer)
+
+    # Acties gebaseerd op of de klant gevonden is, dubbel is en een ID heeft.
+    if klant_count == 0:
+        return "De klant gegevens zijn niet gevonden in het systeem."
+    elif klant_count > 1 and klant_id == 0:
+        return "De klant is dubbel gevonden en er is geen ID waarde meegegeven."
+    elif klant_count == 1:
+        query = '''SELECT * FROM {0} k WHERE 
+        k.klantNaam = '{1}' AND
+        k.postCode = '{2}' AND
+        k.huisNummer = '{3}'
+        '''.format(container_name, klant_naam, postcode, huisnummer)
+    elif klant_count > 1 and klant_id != 0:
+        query = '''SELECT * FROM {0} k WHERE 
+        k.id = '{4}'
+        '''.format(container_name, klant_naam, postcode, huisnummer, klant_id)
+
+    # Als er daadwerkelijk een query gevonden is om uit te voeren voer deze dan uit
+    items = container.query_items(query, enable_cross_partition_query = True)
+    message = 'Coupon niet gevonden.'
+
+    # Omzetten naar 1 item
+    for item in items:
+        klant = (json.dumps(item))
+
+    klant_json = json.loads(klant)
+    i = 0
+    for entry in klant_json['coupon']:
+        if entry['coupon'] == str(coupon):
+            klant_json['coupon']['Locatie'] = nieuwelocatie
+            message = 'Coupon locatie geupdate.'
+        i = 0 + 1
+
+    items = container.query_items(query, enable_cross_partition_query = True)
+
+    # Vervangen van nieuwe json
+    for item in items:
+        container.replace_item(item=item, body=klant_json)
+
+    return message
+
+
 # Functies om het een en ander te controleren, nergeer deze.
 #container = default_actions(HOST, KEY, DATABASE_NAME, 'klantgegevens', '/klantNaam')
 #print(check_doublecustomer(container, 'klantgegevens', 'Cornelis Stuurman', '3333WR', '396'))
@@ -403,55 +464,21 @@ class GebruikCoupon(Resource):
 
         return couponresult
 
-class DubbelKlantInfo(Resource):
-    def get(self, naam, postcode, huisnummer, klantid):
+class UpdateCoupon(Resource):
+    def update(self, naam, postcode, huisnummer, coupon, nieuwelocatie):
+
         container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
-        klant = get_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer, klant_id)
+        klant = get_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer, coupon, nieuwelocatie)
 
         return klant
 
-    def delete(self, naam, postcode, huisnummer, klantid):
-        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
-        klant = delete_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer, klant_id)
-
-        return klant
-
-class DubbelNieuwBezoek(Resource):
-    def post(self):
-        args = parser.parse_args()
-        naam = args['naam']
-        postcode = args['postcode']
-        huisnummer = args['huisnummer']
-        winkelnaam = args['winkelnaam']
-        klant_id = args['klantid']
-
-        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
-        visit = add_visit(container, CONTAINER_NAAM, naam, postcode, huisnummer, winkelnaam, klant_id)
-
-        return visit
-
-class DubbelGebruikCoupon(Resource):
-    def post(self):
-        args = parser.parse_args()
-        naam = args['naam']
-        postcode = args['postcode']
-        huisnummer = args['huisnummer']
-        coupon = args['coupon']
-        klant_id = args['klantid']
-
-        container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
-        couponresult = use_coupon(container, CONTAINER_NAAM, naam, postcode, huisnummer, coupon, klant_id)
-
-        return couponresult
 
 api.add_resource(status, '/api/status')
 api.add_resource(NieuweKlant, '/api/nieuweklant')
 api.add_resource(KlantInfo, '/api/klantinfo/<naam>/<postcode>/<huisnummer>')
 api.add_resource(NieuwBezoek, '/api/nieuwbezoek')
 api.add_resource(GebruikCoupon, '/api/gebruikcoupon')
-api.add_resource(DubbelKlantInfo, '/api/klantinfo/<naam>/<postcode>/<huisnummer>/<klantid>')
-api.add_resource(DubbelNieuwBezoek, '/api/dubbel/nieuwbezoek')
-api.add_resource(DubbelGebruikCoupon, '/api/dubbel/gebruikcoupon')
+api.add_resource(UpdateCoupon, '/api/updatecoupon/<naam>/<postcode>/<huisnummer>/<coupon>/<nieuwelocatie>')
 
 # Start App
 if __name__ == '__main__':
