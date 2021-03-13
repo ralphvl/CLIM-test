@@ -364,17 +364,14 @@ class NieuweKlant(Resource):
         return {'status': 'ok'}
 
 class KlantInfo(Resource):
-    def get(self, userinfo):
-        naam = (userinfo.split('-')[0]).replace('_', ' ')
-        postcode = userinfo.split('-')[1]
-        huisnummer = userinfo.split('-')[2]
+    def get(self, naam, postcode, huisnummer):
 
         container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
         klant = get_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer)
 
         return klant
 
-    def delete(self, userinfo):
+    def delete(self, naam, postcode, huisnummer):
         naam = (userinfo.split('-')[0]).replace('_', ' ')
         postcode = userinfo.split('-')[1]
         huisnummer = userinfo.split('-')[2]
@@ -463,7 +460,7 @@ class DubbelGebruikCoupon(Resource):
 
 api.add_resource(status, '/api/status')
 api.add_resource(NieuweKlant, '/api/nieuweklant')
-api.add_resource(KlantInfo, '/api/klantinfo/<userinfo>')
+api.add_resource(KlantInfo, '/api/klantinfo/<naam>/<postcode>/<huisnummer>')
 api.add_resource(NieuwBezoek, '/api/nieuwbezoek')
 api.add_resource(GebruikCoupon, '/api/gebruikcoupon')
 api.add_resource(DubbelKlantInfo, '/api/dubbel/klantinfo/<userinfo>')
