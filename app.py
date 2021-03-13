@@ -465,7 +465,7 @@ class GebruikCoupon(Resource):
         return couponresult
 
 class UpdateCoupon(Resource):
-    def update(self, naam, postcode, huisnummer, coupon, nieuwelocatie):
+    def patch(self, naam, postcode, huisnummer, coupon, nieuwelocatie):
 
         container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
         klant = update_coupon(container, CONTAINER_NAAM, naam, postcode, huisnummer, coupon, nieuwelocatie)
