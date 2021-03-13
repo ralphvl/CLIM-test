@@ -321,9 +321,6 @@ def use_coupon(container, container_name, klant_naam, postcode, huisnummer, coup
         i = 0 + 1
 
     items = container.query_items(query, enable_cross_partition_query = True)
-    
-    for item in items:
-        container.delete_item(item, partition_key=klant_naam)
 
     # Vervangen van nieuwe json
     for item in items:
