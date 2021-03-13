@@ -306,6 +306,7 @@ def use_coupon(container, container_name, klant_naam, postcode, huisnummer, coup
 
     # Als er daadwerkelijk een query gevonden is om uit te voeren voer deze dan uit
     items = container.query_items(query, enable_cross_partition_query = True)
+    message = 'Coupon niet gevonden'
 
     # Omzetten naar 1 item
     for item in items:
@@ -316,17 +317,19 @@ def use_coupon(container, container_name, klant_naam, postcode, huisnummer, coup
     for entry in klant_json['coupon']:
         if entry['coupon'] == str(coupon):
             klant_json['coupon'].remove(entry)
+            message = 'Coupon gevonden en gebruikt.'
         i = 0 + 1
 
     items = container.query_items(query, enable_cross_partition_query = True)
-
-    return 'Coupon succesvol gebruikt.'
+    
+    for item in items:
+        container.delete_item(item, partition_key=klant_naam)
 
     # Vervangen van nieuwe json
     for item in items:
         container.replace_item(item=item, body=klant_json)
 
-
+    return message
     
 # Functies om het een en ander te controleren, nergeer deze.
 #container = default_actions(HOST, KEY, DATABASE_NAME, 'klantgegevens', '/klantNaam')
