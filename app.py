@@ -374,9 +374,10 @@ def update_coupon(container, container_name, klant_naam, postcode, huisnummer, c
 
     klant_json = json.loads(klant)
     i = 0
+
     for entry in klant_json['coupon']:
         if entry['coupon'] == str(coupon):
-            klant_json['coupon']['Locatie'] = nieuwelocatie
+            klant_json['coupon'][i]['Locatie'] = nieuwelocatie
             message = 'Coupon locatie geupdate.'
         i = 0 + 1
 
