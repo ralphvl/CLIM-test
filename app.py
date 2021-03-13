@@ -328,7 +328,7 @@ def use_coupon(container, container_name, klant_naam, postcode, huisnummer, coup
 
     return message
 
-def update(container, container_name, klant_naam, postcode, huisnummer, coupon, nieuwelocatie, klant_id = 0):
+def update_coupon(container, container_name, klant_naam, postcode, huisnummer, coupon, nieuwelocatie, klant_id = 0):
     '''Update een bestaande coupon
 
     Keyword Arguments:
@@ -468,7 +468,7 @@ class UpdateCoupon(Resource):
     def update(self, naam, postcode, huisnummer, coupon, nieuwelocatie):
 
         container = default_actions(HOST, KEY, DATABASE_NAME, CONTAINER_NAAM, '/klantNaam')
-        klant = get_customer(container, CONTAINER_NAAM, naam, postcode, huisnummer, coupon, nieuwelocatie)
+        klant = update_coupon(container, CONTAINER_NAAM, naam, postcode, huisnummer, coupon, nieuwelocatie)
 
         return klant
 
